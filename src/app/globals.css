@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@custom-variant hover (&:hover);
+
+@theme {
+  --color-background-dark: #0d224a;
+  --color-gray: #4b5563;
+  --color-black: #0c0c0c;
+  --color-blue-light: #8ca3cd;
+  --color-border: #d1d5db;
+  --color-primary: #5272ff;
+  --color-primary-600: #3a5aff;
+  --color-gray-dark: #374151;
+  --color-accent-red: #ee0039;
+  --color-white: #ffffff;
+}
+
