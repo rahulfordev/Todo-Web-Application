@@ -34,7 +34,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               ${error ? "border-accent-red" : "border-border"}
               ${icon ? "pl-10" : ""}
               ${isPassword ? "pr-10" : ""}
-              focus:outline-none focus:ring-2 focus:ring-blue-light focus:border-transparent
+              focus:outline-none focus:ring-1 focus:ring-blue-light focus:border-transparent
               transition-all duration-200
               ${className}
             `}

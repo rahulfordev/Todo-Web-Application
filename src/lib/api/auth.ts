@@ -66,7 +66,7 @@ export const authApi = {
     if (data.bio) formData.append("bio", data.bio);
     if (profileImage) formData.append("profile_image", profileImage);
 
-    return apiClient.postFormData<User>("/api/users/me/", formData);
+    return apiClient.updateFormData<User>("/api/users/me/", formData);
   },
 
   // Change password
