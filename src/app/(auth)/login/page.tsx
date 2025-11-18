@@ -9,8 +9,7 @@ import { toast } from "react-hot-toast";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { authApi } from "@/lib/api/auth";
-import { LoginData } from "@/types/auth";
-import { Mail, Lock } from "lucide-react";
+import { LoginData } from "@/types/auth"; 
 import loginIllustration from "../../../../public/images/login-illustration.svg";
 
 export default function LoginPage() {
