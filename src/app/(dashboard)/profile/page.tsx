@@ -1,8 +1,6 @@
-// src/app/profile/page.tsx
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { toast } from "react-hot-toast";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
