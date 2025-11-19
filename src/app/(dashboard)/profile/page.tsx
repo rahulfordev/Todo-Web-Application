@@ -269,16 +269,13 @@ export default function ProfilePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Bio
-            </label>
-            <textarea
+            <Input
+              as="textarea"
+              label="Bio"
               name="bio"
               value={formData.bio}
               onChange={handleInputChange}
               rows={4}
-              className="w-full px-4 py-3 rounded-lg border border-border text-blue-light focus:outline-none focus:ring-1 focus:ring-blue-light focus:border-transparent
-              transition-all duration-200 resize-none"
               placeholder="Tell us about yourself..."
             />
           </div>

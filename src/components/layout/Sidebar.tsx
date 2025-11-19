@@ -1,4 +1,3 @@
-// src/components/layout/Sidebar.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -43,7 +42,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const handleMenuClick = () => {
-    // Close sidebar on mobile when menu item is clicked
     if (window.innerWidth < 1024) {
       onClose?.();
     }

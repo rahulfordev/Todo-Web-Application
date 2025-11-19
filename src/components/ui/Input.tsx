@@ -1,17 +1,51 @@
-import React, { forwardRef, InputHTMLAttributes } from "react";
+import React, {
+  forwardRef,
+  InputHTMLAttributes,
+  TextareaHTMLAttributes,
+} from "react";
 import { Eye, EyeOff } from "lucide-react";
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+interface BaseProps {
   label?: string;
   error?: string;
   icon?: React.ReactNode;
 }
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, icon, className = "", type = "text", ...props }, ref) => {
+interface InputProps extends InputHTMLAttributes<HTMLInputElement>, BaseProps {
+  as?: "input";
+}
+
+interface TextareaProps
+  extends TextareaHTMLAttributes<HTMLTextAreaElement>,
+    BaseProps {
+  as: "textarea";
+}
+
+type Props = InputProps | TextareaProps;
+
+export const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
+  ({ label, error, icon, className = "", as = "input", ...props }, ref) => {
     const [showPassword, setShowPassword] = React.useState(false);
-    const isPassword = type === "password";
-    const inputType = isPassword && showPassword ? "text" : type;
+
+    const isTextarea = as === "textarea";
+    const isPassword = !isTextarea && (props as InputProps).type === "password";
+    const inputType =
+      isPassword && showPassword
+        ? "text"
+        : !isTextarea
+        ? (props as InputProps).type
+        : undefined;
+
+    const baseClassName = `
+      w-full px-4 py-3 rounded-lg text-sm font-normal text-blue-light border 
+      ${error ? "border-accent-red" : "border-border"}
+      ${icon ? "pl-10" : ""}
+      ${isPassword ? "pr-10" : ""}
+      focus:outline-none focus:ring-1 focus:ring-blue-light focus:border-transparent
+      transition-all duration-200
+      ${isTextarea ? "resize-none" : ""}
+      ${className}
+    `;
 
     return (
       <div className="w-full">
@@ -26,20 +60,20 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               {icon}
             </div>
           )}
-          <input
-            ref={ref}
-            type={inputType}
-            className={`
-              w-full px-4 py-3 rounded-lg text-sm font-normal text-blue-light border 
-              ${error ? "border-accent-red" : "border-border"}
-              ${icon ? "pl-10" : ""}
-              ${isPassword ? "pr-10" : ""}
-              focus:outline-none focus:ring-1 focus:ring-blue-light focus:border-transparent
-              transition-all duration-200
-              ${className}
-            `}
-            {...props}
-          />
+          {isTextarea ? (
+            <textarea
+              ref={ref as React.Ref<HTMLTextAreaElement>}
+              className={baseClassName}
+              {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
+            />
+          ) : (
+            <input
+              ref={ref as React.Ref<HTMLInputElement>}
+              type={inputType}
+              className={baseClassName}
+              {...(props as InputHTMLAttributes<HTMLInputElement>)}
+            />
+          )}
           {isPassword && (
             <button
               type="button"

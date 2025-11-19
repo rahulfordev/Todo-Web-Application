@@ -4,8 +4,7 @@ import axios, {
   InternalAxiosRequestConfig,
 } from "axios";
 import cookies from "js-cookie";
-const BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "https://todo-app.pioneeralpha.com";
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 class ApiClient {
   private client: AxiosInstance;

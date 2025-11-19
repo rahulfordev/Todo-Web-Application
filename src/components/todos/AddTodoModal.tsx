@@ -73,48 +73,21 @@ export const AddTodoModal: React.FC<AddTodoModalProps> = ({
         </div>
 
         {/* Form */}
-        <form
-          onSubmit={handleSubmit(handleFormSubmit)}
-          className="p-6 space-y-6"
-        >
-          <div>
-            <label className="block text-sm font-semibold text-gray-900 mb-2">
-              Title
-            </label>
-            <input
-              type="text"
-              {...register("title", { required: "Title is required" })}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter task title"
-            />
-            {errors.title && (
-              <p className="mt-1 text-sm text-red-500">
-                {errors.title.message}
-              </p>
-            )}
-          </div>
+        <div className="p-6 space-y-6">
+          <Input
+            label="Title"
+            placeholder="Enter task title"
+            {...register("title", { required: "Title is required" })}
+            error={errors.title?.message}
+          />
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-900 mb-2">
-              Date
-            </label>
-            <div className="relative">
-              <input
-                type="date"
-                {...register("todo_date", { required: "Date is required" })}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <Calendar
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                size={20}
-              />
-            </div>
-            {errors.todo_date && (
-              <p className="mt-1 text-sm text-red-500">
-                {errors.todo_date.message}
-              </p>
-            )}
-          </div>
+          <Input
+            label="Date"
+            type="date"
+            icon={<Calendar size={20} />}
+            {...register("todo_date", { required: "Date is required" })}
+            error={errors.todo_date?.message}
+          />
 
           <div>
             <label className="block text-sm font-semibold text-gray-900 mb-3">
@@ -163,24 +136,16 @@ export const AddTodoModal: React.FC<AddTodoModalProps> = ({
             )}
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-900 mb-2">
-              Task Description
-            </label>
-            <textarea
-              {...register("description", {
-                required: "Description is required",
-              })}
-              rows={6}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-              placeholder="Start writing here....."
-            />
-            {errors.description && (
-              <p className="mt-1 text-sm text-red-500">
-                {errors.description.message}
-              </p>
-            )}
-          </div>
+          <Input
+            as="textarea"
+            label="Task Description"
+            rows={6}
+            placeholder="Start writing here....."
+            {...register("description", {
+              required: "Description is required",
+            })}
+            error={errors.description?.message}
+          />
 
           {/* Actions */}
           <div className="flex items-center justify-between pt-4">
@@ -189,6 +154,7 @@ export const AddTodoModal: React.FC<AddTodoModalProps> = ({
               variant="primary"
               loading={loading}
               className="px-8"
+              onClick={handleSubmit(handleFormSubmit)}
             >
               {editingTodo ? "Update" : "Done"}
             </Button>
@@ -200,7 +166,7 @@ export const AddTodoModal: React.FC<AddTodoModalProps> = ({
               <Trash2 size={20} />
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );
