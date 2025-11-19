@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { authApi } from "@/lib/api/auth";
 import { User } from "@/types/auth";
-import { Camera, Upload, Calendar } from "lucide-react";
+import { Camera, Upload, Lock } from "lucide-react";
 
 export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
@@ -24,6 +24,14 @@ export default function ProfilePage() {
     birthday: "",
     bio: "",
   });
+
+  // Password change state
+  const [passwordData, setPasswordData] = useState({
+    old_password: "",
+    new_password: "",
+    confirm_password: "",
+  });
+  const [passwordLoading, setPasswordLoading] = useState(false);
 
   useEffect(() => {
     fetchProfile();
@@ -103,8 +111,52 @@ export default function ProfilePage() {
     }
   };
 
+  // Password change handlers
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPasswordData({
+      ...passwordData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validation
+    if (passwordData.new_password.length < 6) {
+      toast.error("New password must be at least 6 characters");
+      return;
+    }
+
+    if (passwordData.new_password !== passwordData.confirm_password) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
+    setPasswordLoading(true);
+    try {
+      await authApi.changePassword(
+        passwordData.old_password,
+        passwordData.new_password
+      );
+      toast.success("Password updated successfully!");
+
+      // Clear form
+      setPasswordData({
+        old_password: "",
+        new_password: "",
+        confirm_password: "",
+      });
+    } catch (error: any) {
+      toast.error(error.response?.data?.detail || "Failed to change password");
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
+
   return (
-    <div className="mx-auto">
+    <div className="mx-auto space-y-6">
+      {/* Account Information Section */}
       <div className="bg-white rounded-2xl p-6">
         <h3 className="text-2xl font-semibold text-background-dark border-b-2 border-primary pb-1 inline-block mb-8">
           Account Information
@@ -154,7 +206,7 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Form */}
+        {/* Profile Form */}
         <form
           onSubmit={handleSubmit}
           className="space-y-2 border border-[#A1A3ABA1] rounded-2xl py-4 px-6"
@@ -250,6 +302,88 @@ export default function ProfilePage() {
               className="px-10 text-sm"
             >
               Cancel
+            </Button>
+          </div>
+        </form>
+      </div>
+
+      {/* Change Password Section */}
+      <div className="bg-white rounded-2xl p-6">
+        <h3 className="text-2xl font-semibold text-background-dark border-b-2 border-primary pb-1 inline-block mb-8">
+          Security Settings
+        </h3>
+
+        <form
+          onSubmit={handlePasswordSubmit}
+          className="space-y-6 border border-[#A1A3ABA1] rounded-2xl py-4 px-6"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2.5 bg-primary/10 rounded-lg">
+              <Lock className="text-primary" size={20} />
+            </div>
+            <div>
+              <h4 className="font-semibold text-gray-900">Change Password</h4>
+              <p className="text-sm text-gray-600">
+                Update your password to keep your account secure
+              </p>
+            </div>
+          </div>
+
+          <Input
+            label="Current Password"
+            type="password"
+            name="old_password"
+            value={passwordData.old_password}
+            onChange={handlePasswordChange}
+            placeholder="Enter current password"
+            required
+          />
+
+          <Input
+            label="New Password"
+            type="password"
+            name="new_password"
+            value={passwordData.new_password}
+            onChange={handlePasswordChange}
+            placeholder="Enter new password (min 6 characters)"
+            required
+          />
+
+          <Input
+            label="Confirm New Password"
+            type="password"
+            name="confirm_password"
+            value={passwordData.confirm_password}
+            onChange={handlePasswordChange}
+            placeholder="Re-enter new password"
+            required
+          />
+
+          {/* Action Buttons */}
+          <div className="flex items-center gap-4 pt-4">
+            <Button
+              type="submit"
+              variant="primary"
+              loading={passwordLoading}
+              size="lg"
+              className="px-10 text-sm"
+            >
+              Update Password
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() =>
+                setPasswordData({
+                  old_password: "",
+                  new_password: "",
+                  confirm_password: "",
+                })
+              }
+              size="lg"
+              className="px-10 text-sm"
+            >
+              Clear
             </Button>
           </div>
         </form>

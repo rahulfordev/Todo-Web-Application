@@ -4,6 +4,9 @@ import { CSS } from "@dnd-kit/utilities";
 import { Edit2, Trash2, GripVertical } from "lucide-react";
 import { Todo, Priority } from "@/types/todo";
 import { format } from "date-fns";
+import edit from "../../../public/images/edit.svg";
+import deleteIcon from "../../../public/images/delete.svg";
+import Image from "next/image";
 
 interface DraggableTodoCardProps {
   todo: Todo;
@@ -16,18 +19,18 @@ const priorityConfig: Record<
   { bg: string; text: string; label: string }
 > = {
   extreme: {
-    bg: "bg-red-50",
-    text: "text-red-600",
+    bg: "bg-[#FEE2E2]",
+    text: "text-[#DC2626]",
     label: "Extreme",
   },
   moderate: {
-    bg: "bg-green-50",
-    text: "text-green-600",
+    bg: "bg-[#DCFCE7]",
+    text: "text-[#16A34A]",
     label: "Moderate",
   },
   low: {
-    bg: "bg-yellow-50",
-    text: "text-yellow-600",
+    bg: "bg-[#FEF9C3]",
+    text: "text-[#CA8A04]",
     label: "Low",
   },
 };
@@ -58,27 +61,22 @@ export const DraggableTodoCard: React.FC<DraggableTodoCardProps> = ({
     <div
       ref={setNodeRef}
       style={style}
-      className={`${
-        priorityStyle.bg
-      } rounded-xl p-5 border border-gray-200 hover:shadow-md transition-all ${
+      className={`bg-white rounded-xl p-5 border border-gray-200 hover:shadow-md transition-all ${
         isDragging ? "z-50 shadow-2xl" : ""
       }`}
     >
-      {/* Header: Title and Priority Badge */}
       <div className="flex items-start justify-between gap-3 mb-3">
-        <h3 className="font-semibold text-gray-900 text-base leading-tight flex-1">
+        <h3 className="font-medium text-background-dark text-base leading-tight flex-1">
           {todo.title}
         </h3>
 
         <div className="flex items-center gap-1">
-          {/* Priority Badge */}
           <span
-            className={`px-2.5 py-1 rounded text-xs font-medium ${priorityStyle.text} bg-white/80 backdrop-blur-sm`}
+            className={`px-2.5 py-1 rounded text-sm font-normal ${priorityStyle.text} ${priorityStyle.bg} backdrop-blur-sm`}
           >
             {priorityStyle.label}
           </span>
 
-          {/* Drag Handle */}
           <button
             {...attributes}
             {...listeners}
@@ -90,39 +88,38 @@ export const DraggableTodoCard: React.FC<DraggableTodoCardProps> = ({
       </div>
 
       {/* Description */}
-      <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-2">
+      <p className="text-gray text-sm leading-relaxed mb-4 line-clamp-2">
         {todo.description}
       </p>
 
       {/* Footer: Due Date and Actions */}
       <div className="flex items-center justify-between">
-        <span className="text-gray-600 text-sm">
+        <span className="text-gray text-sm">
           Due {format(new Date(todo.todo_date), "MMM dd, yyyy")}
         </span>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => onEdit(todo)}
-            className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+            className="p-1.5 bg-background-light rounded-lg transition-colors cursor-pointer"
             title="Edit task"
           >
-            <Edit2 size={16} />
+            <Image src={edit} alt="edit" />
           </button>
           <button
             onClick={() => onDelete(todo.id)}
-            className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            className="p-1.5 bg-background-light rounded-lg transition-colors cursor-pointer"
             title="Delete task"
           >
-            <Trash2 size={16} />
+            <Image src={deleteIcon} alt="delete" />
           </button>
         </div>
       </div>
 
-      {/* Completion Badge (if completed) */}
       {todo.is_completed && (
         <div className="mt-3 pt-3 border-t border-gray-200">
-          <span className="inline-flex items-center gap-1 text-green-600 font-medium text-xs">
+          <span className="inline-flex items-center gap-1 text-[#16A34A] font-medium text-xs">
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fillRule="evenodd"

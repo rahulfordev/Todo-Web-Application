@@ -19,6 +19,7 @@ import {
 import { DraggableTodoCard } from "@/components/todos/DraggableTodoCard";
 import { AddTodoModal } from "@/components/todos/AddTodoModal";
 import { FilterDropdown } from "@/components/todos/FilterDropdown";
+import { Pagination } from "@/components/ui/Pagination";
 import { Button } from "@/components/ui/Button";
 import { todosApi } from "@/lib/api/todos";
 import { Todo, CreateTodoData, TodoFilters } from "@/types/todo";
@@ -38,6 +39,13 @@ export default function TodosPage() {
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [filters, setFilters] = useState<TodoFilters>({});
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [nextPage, setNextPage] = useState<string | null>(null);
+  const [previousPage, setPreviousPage] = useState<string | null>(null);
+  const itemsPerPage = 9; // 3x3 grid
+
   // Setup sensors for drag and drop
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -52,16 +60,24 @@ export default function TodosPage() {
 
   useEffect(() => {
     fetchTodos();
-  }, [filters]);
+  }, [filters, currentPage]);
 
   const fetchTodos = async () => {
     setLoading(true);
     try {
-      const response = await todosApi.getTodos(filters);
+      const response = await todosApi.getTodos({
+        ...filters,
+        page: currentPage,
+      });
+
       const sortedTodos = response.results.sort(
         (a, b) => a.position - b.position
       );
+
       setTodos(sortedTodos);
+      setTotalCount(response.count);
+      setNextPage(response.next);
+      setPreviousPage(response.previous);
     } catch (error) {
       console.error("Failed to fetch todos:", error);
       toast.error("Failed to load todos");
@@ -70,17 +86,22 @@ export default function TodosPage() {
     }
   };
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const handleSearch = () => {
     if (searchQuery.trim()) {
       setFilters({ ...filters, search: searchQuery.trim() });
+      setCurrentPage(1); // Reset to first page on search
     } else {
-      // Remove search filter if query is empty
       const { search, ...restFilters } = filters;
       setFilters(restFilters);
+      setCurrentPage(1);
     }
   };
 
-  // Handle Enter key for search
   const handleSearchKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       handleSearch();
@@ -114,7 +135,13 @@ export default function TodosPage() {
     try {
       await todosApi.deleteTodo(id);
       toast.success("Task deleted successfully!");
-      fetchTodos();
+
+      // Check if we need to go to previous page
+      if (todos.length === 1 && currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+      } else {
+        fetchTodos();
+      }
     } catch (error) {
       toast.error("Failed to delete task");
     }
@@ -161,16 +188,14 @@ export default function TodosPage() {
   const handleFilterChange = (filterValue: string) => {
     const today = new Date();
 
-    // Toggle filter selection
     const newSelectedFilters = selectedFilters.includes(filterValue)
       ? selectedFilters.filter((f) => f !== filterValue)
-      : [filterValue]; // Only one filter at a time
+      : [filterValue];
 
     setSelectedFilters(newSelectedFilters);
+    setCurrentPage(1); // Reset to first page on filter change
 
-    // Apply filter based on selection
     if (newSelectedFilters.length === 0) {
-      // Remove date filter but keep other filters
       const { todo_date, ...restFilters } = filters;
       setFilters(restFilters);
     } else {
@@ -197,7 +222,6 @@ export default function TodosPage() {
           newFilters.todo_date = thirtyDaysLater.toISOString().split("T")[0];
           break;
         default:
-          // Remove date filter
           const { todo_date, ...restFilters } = newFilters;
           newFilters = restFilters;
       }
@@ -206,12 +230,14 @@ export default function TodosPage() {
     }
   };
 
-  // Clear all filters
   const handleClearFilters = () => {
     setSelectedFilters([]);
     setSearchQuery("");
     setFilters({});
+    setCurrentPage(1);
   };
+
+  const totalPages = Math.ceil(totalCount / itemsPerPage);
 
   return (
     <>
@@ -243,6 +269,7 @@ export default function TodosPage() {
                 placeholder="Search your task here.."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={handleSearchKeyPress}
                 className="bg-white !py-2.5"
               />
               <button
@@ -267,7 +294,6 @@ export default function TodosPage() {
                 <ArrowUpDown size={14} className="text-gray-600" />
               </button>
 
-              {/* Filter Dropdown */}
               <FilterDropdown
                 isOpen={showFilters}
                 onClose={() => setShowFilters(false)}
@@ -319,7 +345,7 @@ export default function TodosPage() {
                 items={todos.map((todo) => todo.id)}
                 strategy={rectSortingStrategy}
               >
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
                   {todos.map((todo) => (
                     <DraggableTodoCard
                       key={todo.id}
@@ -331,6 +357,18 @@ export default function TodosPage() {
                 </div>
               </SortableContext>
             </DndContext>
+
+            {totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                hasNext={!!nextPage}
+                hasPrevious={!!previousPage}
+                totalCount={totalCount}
+                items={todos.length}
+              />
+            )}
           </div>
         )}
       </div>

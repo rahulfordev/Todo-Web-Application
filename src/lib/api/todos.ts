@@ -7,27 +7,26 @@ import {
   TodoFilters,
 } from "@/types/todo";
 
-export const todosApi = {
-  // Get all todos with optional filters
-  getTodos: async (filters?: TodoFilters): Promise<TodosResponse> => {
+export const todosApi = { 
+  getTodos: async (filters?: TodoFilters & { page?: number }): Promise<TodosResponse> => {
     const params = new URLSearchParams();
 
-    // Add is_completed filter
+    if (filters?.page) {
+      params.append("page", String(filters.page));
+    }
+ 
     if (filters?.is_completed !== undefined) {
       params.append("is_completed", String(filters.is_completed));
     }
 
-    // Add priority filter
     if (filters?.priority) {
       params.append("priority", filters.priority);
     }
-
-    // Add todo_date filter
+  
     if (filters?.todo_date) {
       params.append("todo_date", filters.todo_date);
     }
 
-    // Add search filter
     if (filters?.search && filters.search.trim() !== "") {
       params.append("search", filters.search.trim());
     }
