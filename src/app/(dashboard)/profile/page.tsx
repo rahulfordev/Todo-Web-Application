@@ -157,7 +157,7 @@ export default function ProfilePage() {
   return (
     <div className="mx-auto space-y-6">
       {/* Account Information Section */}
-      <div className="bg-white rounded-2xl p-6">
+      <div className="bg-white rounded-2xl p-2 sm:p-6">
         <h3 className="text-2xl font-semibold text-background-dark border-b-2 border-primary pb-1 inline-block mb-8">
           Account Information
         </h3>
@@ -209,7 +209,7 @@ export default function ProfilePage() {
         {/* Profile Form */}
         <form
           onSubmit={handleSubmit}
-          className="space-y-2 border border-[#A1A3ABA1] rounded-2xl py-4 px-6"
+          className="space-y-2 border border-[#A1A3ABA1] rounded-2xl py-4 px-4 sm:px-6"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input
@@ -281,13 +281,13 @@ export default function ProfilePage() {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-4 pt-6">
+          <div className="flex flex-col w-full sm:flex-row items-center gap-2 sm:gap-4 pt-4">
             <Button
               type="submit"
               variant="primary"
               loading={loading}
               size="lg"
-              className="px-10 text-sm"
+              className="px-10 text-sm w-full"
             >
               Save Changes
             </Button>
@@ -296,7 +296,7 @@ export default function ProfilePage() {
               variant="outline"
               onClick={handleCancel}
               size="lg"
-              className="px-10 text-sm"
+              className="px-10 text-sm w-full"
             >
               Cancel
             </Button>
@@ -305,7 +305,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Change Password Section */}
-      <div className="bg-white rounded-2xl p-6">
+      <div className="bg-white rounded-2xl p-2 sm:p-6">
         <h3 className="text-2xl font-semibold text-background-dark border-b-2 border-primary pb-1 inline-block mb-8">
           Security Settings
         </h3>
@@ -357,13 +357,13 @@ export default function ProfilePage() {
           />
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-4 pt-4">
+          <div className="flex flex-col w-full sm:flex-row items-center gap-2 md:gap-4 pt-4">
             <Button
               type="submit"
               variant="primary"
               loading={passwordLoading}
               size="lg"
-              className="px-10 text-sm"
+              className="px-10 text-sm w-full"
             >
               Update Password
             </Button>
@@ -378,7 +378,7 @@ export default function ProfilePage() {
                 })
               }
               size="lg"
-              className="px-10 text-sm"
+              className="px-10 text-sm w-full"
             >
               Clear
             </Button>
