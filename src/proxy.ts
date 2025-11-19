@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const token = request.cookies.get("access_token")?.value;
   const { pathname } = request.nextUrl;
 
@@ -16,6 +16,11 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
+  const isRootRoute = request.nextUrl.pathname === `/`;
+
+  if (token && isRootRoute) {
+    return NextResponse.redirect(new URL(`/todos`, request.url));
+  }
   // If logged in and trying to access auth pages, redirect to todos
   if (token && isPublicRoute) {
     return NextResponse.redirect(new URL("/todos", request.url));
