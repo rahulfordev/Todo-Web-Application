@@ -30,11 +30,7 @@ export const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
     const isTextarea = as === "textarea";
     const isPassword = !isTextarea && (props as InputProps).type === "password";
     const inputType =
-      isPassword && showPassword
-        ? "text"
-        : !isTextarea
-        ? (props as InputProps).type
-        : undefined;
+      isPassword && showPassword ? "text" : (props as InputProps).type;
 
     const baseClassName = `
       w-full px-4 py-3 rounded-lg text-sm font-normal text-blue-light border 
@@ -46,6 +42,34 @@ export const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
       ${isTextarea ? "resize-none" : ""}
       ${className}
     `;
+
+    // For textarea, use props as is
+    if (isTextarea) {
+      return (
+        <div className="w-full">
+          {label && (
+            <label className="block text-sm font-medium text-black mb-1.5">
+              {label}
+            </label>
+          )}
+          <div className="relative">
+            {icon && (
+              <div className="absolute left-3 top-3 text-gray-400">{icon}</div>
+            )}
+            <textarea
+              ref={ref as React.Ref<HTMLTextAreaElement>}
+              className={baseClassName}
+              {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
+            />
+          </div>
+          {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
+        </div>
+      );
+    }
+
+    // For input, remove type from props to avoid override
+    const { type, ...inputProps } =
+      props as InputHTMLAttributes<HTMLInputElement>;
 
     return (
       <div className="w-full">
@@ -60,20 +84,12 @@ export const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
               {icon}
             </div>
           )}
-          {isTextarea ? (
-            <textarea
-              ref={ref as React.Ref<HTMLTextAreaElement>}
-              className={baseClassName}
-              {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
-            />
-          ) : (
-            <input
-              ref={ref as React.Ref<HTMLInputElement>}
-              type={inputType}
-              className={baseClassName}
-              {...(props as InputHTMLAttributes<HTMLInputElement>)}
-            />
-          )}
+          <input
+            ref={ref as React.Ref<HTMLInputElement>}
+            type={inputType}
+            className={baseClassName}
+            {...inputProps}
+          />
           {isPassword && (
             <button
               type="button"
