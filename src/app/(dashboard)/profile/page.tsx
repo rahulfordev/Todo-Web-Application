@@ -287,7 +287,7 @@ export default function ProfilePage() {
               variant="primary"
               loading={loading}
               size="lg"
-              className="px-10 text-sm w-full"
+              className="px-10 text-sm w-full sm:w-fit"
             >
               Save Changes
             </Button>
@@ -296,7 +296,7 @@ export default function ProfilePage() {
               variant="outline"
               onClick={handleCancel}
               size="lg"
-              className="px-10 text-sm w-full"
+              className="px-10 text-sm w-full sm:w-fit"
             >
               Cancel
             </Button>
@@ -363,7 +363,7 @@ export default function ProfilePage() {
               variant="primary"
               loading={passwordLoading}
               size="lg"
-              className="px-10 text-sm w-full"
+              className="px-10 text-sm w-full sm:w-fit"
             >
               Update Password
             </Button>
@@ -378,7 +378,7 @@ export default function ProfilePage() {
                 })
               }
               size="lg"
-              className="px-10 text-sm w-full"
+              className="px-10 text-sm w-full sm:w-fit"
             >
               Clear
             </Button>
